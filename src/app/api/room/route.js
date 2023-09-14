@@ -5,33 +5,37 @@ import { NextResponse } from "next/server";
 
 export const GET = async () => {
   readDB();
+  let room = DB.rooms;
   return NextResponse.json({
     ok: true,
-    //rooms:
-    //totalRooms:
+    room,
+    totalRooms: room.length,
   });
 };
 
 export const POST = async (request) => {
   const payload = checkToken();
-
-  // return NextResponse.json(
-  //   {
-  //     ok: false,
-  //     message: "Invalid token",
-  //   },
-  //   { status: 401 }
-  // );
+  if(!payload)
+  return NextResponse.json(
+    {
+      ok: false,
+      message: "Invalid token",
+    },
+    { status: 401 }
+  );
 
   readDB();
-
-  // return NextResponse.json(
-  //   {
-  //     ok: false,
-  //     message: `Room ${"replace this with room name"} already exists`,
-  //   },
-  //   { status: 400 }
-  // );
+  const body = await request.json();
+  const { roomName } = body;
+  const foundRoomDupe = DB.rooms.find((x)=>x.roomId===roomId )
+  if(!foundRoomDupe)
+  return NextResponse.json(
+    {
+      ok: false,
+      message: `Room ${roomName} already exists`,
+    },
+    { status: 400 }
+  );
 
   const roomId = nanoid();
 
